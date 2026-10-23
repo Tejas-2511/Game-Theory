@@ -13,125 +13,156 @@ from simulation import MultiRoundSimulator, get_agent_by_type
 # Page setup
 st.set_page_config(
     page_title="SocialMedia.Nash — Game Theory Simulation",
-    page_icon="🎯",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling
-st.markdown("""
+# Custom Styling (Minimalist with Subtle Color Accents)
+st.html("""
 <style>
-    /* Metric Card Styling */
-    .metric-box {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .metric-title {
-        color: #94a3b8;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 6px;
-    }
-    .metric-value {
-        color: #38bdf8;
-        font-size: 1.75rem;
-        font-weight: 700;
-    }
-    .metric-sub {
-        color: #cbd5e1;
-        font-size: 0.85rem;
-        margin-top: 4px;
+    /* Global Clean Font & Spacing */
+    html, body, [class*="css"] {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* Matrix Table Styling */
+    /* Minimalist Metric Card */
+    .metric-box {
+        background: #121214;
+        border: 1px solid #27272a;
+        border-radius: 2px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+    .metric-title {
+        color: #71717a;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 4px;
+    }
+    .metric-value {
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    .metric-sub {
+        color: #71717a;
+        font-size: 0.78rem;
+        margin-top: 2px;
+    }
+
+    /* Minimalist Matrix Table with Subtle Color Accents */
     .matrix-table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 8px;
-        margin-top: 15px;
-        margin-bottom: 20px;
+        border-collapse: collapse;
+        margin-top: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #27272a;
     }
     .matrix-header {
-        background-color: #1e293b;
-        color: #f8fafc;
-        padding: 14px;
+        background-color: #18181b;
+        color: #e4e4e7;
+        padding: 12px 10px;
         text-align: center;
-        font-weight: 700;
-        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid #27272a;
+        border-radius: 0px;
+        letter-spacing: 0.02em;
     }
     .matrix-cell {
-        background: #111827;
-        border: 2px solid #374151;
-        border-radius: 10px;
-        padding: 18px 12px;
+        background: #0f0f11;
+        border: 1px solid #27272a;
+        border-radius: 0px;
+        padding: 16px 10px;
         text-align: center;
-        transition: all 0.2s ease-in-out;
+        transition: background 0.15s ease;
     }
-    .matrix-cell.selected {
-        border-color: #38bdf8;
-        box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
-        background: #1e293b;
+    .matrix-cell:hover {
+        background: #18181b;
     }
     .matrix-cell.nash {
-        border-color: #10b981;
-        box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+        background: #131a16;
+        border: 1px solid #34d399;
     }
     .matrix-cell.social-opt {
-        border-color: #f59e0b;
+        border: 1px dashed #fbbf24;
     }
     .payoff-a {
         color: #38bdf8;
-        font-size: 1.4rem;
-        font-weight: 800;
+        font-size: 1.25rem;
+        font-weight: 700;
     }
     .payoff-b {
-        color: #ec4899;
-        font-size: 1.4rem;
-        font-weight: 800;
+        color: #c084fc;
+        font-size: 1.25rem;
+        font-weight: 700;
     }
     .badge {
         display: inline-block;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        margin-top: 4px;
+        padding: 2px 6px;
+        border-radius: 2px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin: 2px 2px;
     }
     .badge-nash {
-        background-color: rgba(16, 185, 129, 0.2);
+        background-color: rgba(52, 211, 153, 0.12);
         color: #34d399;
-        border: 1px solid #10b981;
+        border: 1px solid rgba(52, 211, 153, 0.35);
     }
     .badge-social {
-        background-color: rgba(245, 158, 11, 0.2);
+        background-color: rgba(251, 191, 36, 0.12);
         color: #fbbf24;
-        border: 1px solid #f59e0b;
+        border: 1px solid rgba(251, 191, 36, 0.35);
     }
     .badge-br-a {
-        background-color: rgba(56, 189, 248, 0.15);
+        background-color: rgba(56, 189, 248, 0.1);
         color: #38bdf8;
-        border: 1px solid #0284c7;
+        border: 1px solid rgba(56, 189, 248, 0.3);
     }
     .badge-br-b {
-        background-color: rgba(236, 72, 153, 0.15);
-        color: #f472b6;
-        border: 1px solid #db2777;
+        background-color: rgba(192, 132, 252, 0.1);
+        color: #c084fc;
+        border: 1px solid rgba(192, 132, 252, 0.3);
+    }
+
+    /* Clean Subtle Callout Boxes */
+    .callout-box {
+        background: #141416;
+        border: 1px solid #27272a;
+        border-left: 3px solid #38bdf8;
+        border-radius: 2px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #d4d4d8;
+    }
+    .callout-box.nash {
+        border-left-color: #34d399;
+    }
+    .callout-box.dilemma {
+        border-left-color: #f87171;
+    }
+    .callout-box.info {
+        border-left-color: #38bdf8;
+    }
+    .callout-box.warning {
+        border-left-color: #fbbf24;
     }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 
 # ==========================================
 # SIDEBAR: MODEL CONFIGURATION
 # ==========================================
-st.sidebar.title("🎮 Model Configuration")
-st.sidebar.markdown("Configure the game parameters and payoffs.")
+st.sidebar.title("Model Configuration")
+st.sidebar.markdown("Game parameters and payoff settings.")
 
 game_type = st.sidebar.radio(
     "Game Complexity",
@@ -181,7 +212,7 @@ if game_type == "2x2 Standard (Trending vs Original)":
         p_a = np.array([[1.0, 6.0], [2.0, 4.0]])
         p_b = np.array([[1.0, 2.0], [6.0, 4.0]])
     else:  # Custom Values
-        st.sidebar.markdown("### ✏️ Edit Payoff Matrix (2x2)")
+        st.sidebar.markdown("### Edit Payoff Matrix (2x2)")
         col1, col2 = st.sidebar.columns(2)
         with col1:
             st.caption("**Creator A Payoffs**")
@@ -204,7 +235,7 @@ elif game_type == "3x3 Extended (Trending, Original, Niche)":
     game = GameModel.create_3x3_extended()
 else:
     # Custom Matrix Editor
-    st.sidebar.markdown("### ✏️ Custom 3x3 Payoff Matrix")
+    st.sidebar.markdown("### Custom 3x3 Payoff Matrix")
     strategies_custom = ["Trending", "Original", "Niche"]
     p_a_cust = np.copy(st.session_state.custom_p_a_3x3)
     p_b_cust = np.copy(st.session_state.custom_p_b_3x3)
@@ -218,18 +249,17 @@ else:
     game = GameModel(strategies_custom, p_a_cust, p_b_cust)
 
 
-# App Header
-st.markdown("""
-<div style="text-align: center; padding: 15px 0 25px 0;">
-    <h1 style="color: #f8fafc; font-size: 2.6rem; margin-bottom: 6px;">
-        📱 Game Theory Analysis of Social Media Competition
+# App Header (Clean & Minimalist)
+st.html("""
+<div style="padding: 10px 0 18px 0; border-bottom: 1px solid #27272a; margin-bottom: 18px;">
+    <h1 style="color: #ffffff; font-size: 2.0rem; font-weight: 700; margin: 0 0 6px 0; letter-spacing: -0.02em;">
+        Game Theory: Social Media Content Competition
     </h1>
-    <p style="color: #94a3b8; font-size: 1.15rem; max-width: 850px; margin: 0 auto;">
-        An interactive computational simulation examining creator incentives, viral algorithms,
-        Nash equilibria, and the collective attention dilemma in content platforms.
+    <p style="color: #71717a; font-size: 0.95rem; margin: 0;">
+        Strategic modeling of creator incentives, Nash equilibria, and attention dynamics.
     </p>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 
 # Top-level quick KPI strip
@@ -241,55 +271,55 @@ pd_check = game.is_prisoners_dilemma()
 col1, col2, col3, col4 = st.columns(4)
 with col1:
     nash_desc = ", ".join([f"({game.strategies[i]}, {game.strategies[j]})" for (i, j) in nash_eqs]) if nash_eqs else "None (Pure)"
-    st.markdown(f"""
+    st.html(f"""
     <div class="metric-box">
         <div class="metric-title">Nash Equilibrium</div>
         <div class="metric-value" style="color: #34d399;">{nash_desc}</div>
-        <div class="metric-sub">Self-enforcing strategic outcome</div>
+        <div class="metric-sub">Self-enforcing outcome</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 with col2:
     dom_a = dominant_strats["Creator A"]["strictly_dominant"] or "None"
-    st.markdown(f"""
+    st.html(f"""
     <div class="metric-box">
         <div class="metric-title">Creator A Dominant Strategy</div>
         <div class="metric-value" style="color: #38bdf8;">{dom_a}</div>
         <div class="metric-sub">Optimal regardless of opponent</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 with col3:
     dom_b = dominant_strats["Creator B"]["strictly_dominant"] or "None"
-    st.markdown(f"""
+    st.html(f"""
     <div class="metric-box">
         <div class="metric-title">Creator B Dominant Strategy</div>
-        <div class="metric-value" style="color: #ec4899;">{dom_b}</div>
+        <div class="metric-value" style="color: #c084fc;">{dom_b}</div>
         <div class="metric-sub">Optimal regardless of opponent</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 with col4:
     opt_str = f"({game.strategies[social_optima[0][0]]}, {game.strategies[social_optima[0][1]]})"
     opt_val = social_optima[0][2]
-    st.markdown(f"""
+    st.html(f"""
     <div class="metric-box">
-        <div class="metric-title">Social Optimum (Max Combined)</div>
-        <div class="metric-value" style="color: #f59e0b;">{opt_str} = {opt_val}</div>
-        <div class="metric-sub">Pareto efficient collective state</div>
+        <div class="metric-title">Social Optimum</div>
+        <div class="metric-value" style="color: #fbbf24;">{opt_str} = {opt_val}</div>
+        <div class="metric-sub">Pareto efficient state</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 
 # ==========================================
 # TABS INTERFACE
 # ==========================================
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 Payoff Matrix & Equilibrium",
-    "🎯 Single-Round Sandbox",
-    "🔄 Iterated Multi-Round Simulation",
-    "🎮 Human vs AI Arena",
-    "📑 Project Report & Viva Guide"
+    "Payoff Matrix & Equilibrium",
+    "Single-Round Sandbox",
+    "Multi-Round Simulation",
+    "Human vs AI Arena",
+    "Theory & Viva Guide"
 ])
 
 
@@ -310,13 +340,13 @@ with tab1:
 
     # Render HTML Matrix Table
     html_table = '<table class="matrix-table">'
-    html_table += '<tr><th class="matrix-header" style="background:#0f172a;">Creator A \\ Creator B</th>'
+    html_table += '<thead><tr><th class="matrix-header" style="background:#18181b; color:#71717a;">Creator A \\ Creator B</th>'
     for strat in game.strategies:
-        html_table += f'<th class="matrix-header"><span style="color:#ec4899;">Creator B: {strat}</span></th>'
-    html_table += '</tr>'
+        html_table += f'<th class="matrix-header"><span style="color:#e4e4e7;">Creator B: {strat}</span></th>'
+    html_table += '</tr></thead><tbody>'
 
     for i, strat_a in enumerate(game.strategies):
-        html_table += f'<tr><td class="matrix-header"><span style="color:#38bdf8;">Creator A: {strat_a}</span></td>'
+        html_table += f'<tr><td class="matrix-header"><span style="color:#e4e4e7;">Creator A: {strat_a}</span></td>'
         for j, strat_b in enumerate(game.strategies):
             is_nash = (i, j) in nash_eqs
             is_social = (i, j) in social_cells
@@ -331,40 +361,42 @@ with tab1:
 
             badges = []
             if is_nash:
-                badges.append('<span class="badge badge-nash">★ Nash Equilibrium</span>')
+                badges.append('<span class="badge badge-nash">Nash Eq</span>')
             if is_social:
-                badges.append('<span class="badge badge-social">🌟 Social Optimum</span>')
+                badges.append('<span class="badge badge-social">Social Opt</span>')
             if is_br_a:
                 badges.append('<span class="badge badge-br-a">BR A</span>')
             if is_br_b:
                 badges.append('<span class="badge badge-br-b">BR B</span>')
 
-            badge_html = "<br/>".join(badges)
+            badge_html = f"<div style='margin-top: 6px;'>{' '.join(badges)}</div>" if badges else ""
             val_a = game.payoff_a[i, j]
             val_b = game.payoff_b[i, j]
 
-            html_table += f"""
-            <td class="{' '.join(cell_classes)}">
-                <span class="payoff-a">{val_a:.1f}</span>,
-                <span class="payoff-b">{val_b:.1f}</span>
-                <div style="margin-top: 6px;">{badge_html}</div>
-            </td>
-            """
+            html_table += (
+                f'<td class="{" ".join(cell_classes)}">'
+                f'<span class="payoff-a">{val_a:.1f}</span>, '
+                f'<span class="payoff-b">{val_b:.1f}</span>'
+                f'{badge_html}'
+                f'</td>'
+            )
         html_table += '</tr>'
-    html_table += '</table>'
+    html_table += '</tbody></table>'
 
-    st.markdown(html_table, unsafe_allow_html=True)
+    st.html(html_table)
 
-    # Legends
-    st.markdown("""
-    **Legend**:
-    - <span style="color:#38bdf8; font-weight:bold;">First number (Blue)</span> = Creator A's engagement score.
-    - <span style="color:#ec4899; font-weight:bold;">Second number (Pink)</span> = Creator B's engagement score.
-    - <span class="badge badge-br-a">BR A</span> = Best response for Creator A.
-    - <span class="badge badge-br-b">BR B</span> = Best response for Creator B.
-    - <span class="badge badge-nash">★ Nash Equilibrium</span> = Mutual best response cell (stable equilibrium).
-    - <span class="badge badge-social">🌟 Social Optimum</span> = Maximum combined platform engagement.
-    """, unsafe_allow_html=True)
+    # Legends (Subtle colors)
+    st.html("""
+    <div style="margin-top: 8px; margin-bottom: 18px; font-size: 0.88rem; color: #a1a1aa; line-height: 1.8;">
+        <span style="font-weight: 600; color: #ffffff;">Legend:</span>
+        <span style="margin-left: 12px;"><b style="color: #38bdf8;">(A)</b> Creator A</span>
+        <span style="margin-left: 12px;"><b style="color: #c084fc;">(B)</b> Creator B</span>
+        <span style="margin-left: 12px;"><span class="badge badge-br-a">BR A</span> Best response A</span>
+        <span style="margin-left: 12px;"><span class="badge badge-br-b">BR B</span> Best response B</span>
+        <span style="margin-left: 12px;"><span class="badge badge-nash">Nash Eq</span> Equilibrium</span>
+        <span style="margin-left: 12px;"><span class="badge badge-social">Social Opt</span> Max Combined</span>
+    </div>
+    """)
 
     st.markdown("---")
 
@@ -372,46 +404,60 @@ with tab1:
     col_left, col_right = st.columns(2)
 
     with col_left:
-        st.markdown("### 🔍 Equilibrium Analysis")
+        st.markdown("### Equilibrium Analysis")
         if nash_eqs:
             for (ni, nj) in nash_eqs:
-                st.success(
-                    f"**Pure-Strategy Nash Equilibrium at ({game.strategies[ni]}, {game.strategies[nj]})**\n\n"
-                    f"- Creator A receives **{game.payoff_a[ni, nj]:.1f}**\n"
-                    f"- Creator B receives **{game.payoff_b[ni, nj]:.1f}**\n"
-                    f"- Neither creator can unilaterally deviate to another strategy and achieve higher engagement."
-                )
+                st.html(f"""
+                <div class="callout-box nash">
+                    <b style="color: #34d399;">Pure-Strategy Nash Equilibrium at ({game.strategies[ni]}, {game.strategies[nj]})</b><br/>
+                    • Creator A receives <b>{game.payoff_a[ni, nj]:.1f}</b><br/>
+                    • Creator B receives <b>{game.payoff_b[ni, nj]:.1f}</b><br/>
+                    • Neither creator can unilaterally deviate to another strategy and achieve higher engagement.
+                </div>
+                """)
         else:
-            st.warning("No pure-strategy Nash equilibrium exists in this payoff configuration. Creators would engage in cyclic strategy switching.")
+            st.html("""
+            <div class="callout-box warning">
+                No pure-strategy Nash equilibrium exists in this payoff configuration. Creators would engage in cyclic strategy switching.
+            </div>
+            """)
 
         # Mixed Strategy calculation if 2x2
         mixed_res = game.calculate_mixed_nash_2x2()
         if mixed_res:
-            st.markdown("#### 🎲 Mixed-Strategy Nash Equilibrium")
+            st.markdown("#### Mixed-Strategy Nash Equilibrium")
             if mixed_res["is_valid_internal"]:
-                st.info(
-                    f"If creators randomize their content:\n\n"
-                    f"- Creator A plays **Trending** with probability $p = {mixed_res['p_creator_a_trending']:.2f}$ and **Original** with $1-p = {mixed_res['p_creator_a_original']:.2f}$\n"
-                    f"- Creator B plays **Trending** with probability $q = {mixed_res['q_creator_b_trending']:.2f}$ and **Original** with $1-q = {mixed_res['q_creator_b_original']:.2f}$"
-                )
+                st.html(f"""
+                <div class="callout-box info">
+                    <b>Mixed Strategy Probabilities:</b><br/>
+                    • Creator A plays <b>Trending</b> with p = {mixed_res['p_creator_a_trending']:.2f} and <b>Original</b> with 1-p = {mixed_res['p_creator_a_original']:.2f}<br/>
+                    • Creator B plays <b>Trending</b> with q = {mixed_res['q_creator_b_trending']:.2f} and <b>Original</b> with 1-q = {mixed_res['q_creator_b_original']:.2f}
+                </div>
+                """)
             else:
                 st.caption("Pure dominant strategies prevent an interior mixed-strategy equilibrium.")
 
     with col_right:
-        st.markdown("### ⚠️ The Attention Economy Prisoner's Dilemma")
+        st.markdown("### The Attention Economy Prisoner's Dilemma")
         if pd_check["is_pd"]:
-            st.error(
-                f"**Prisoner's Dilemma Confirmed!**\n\n"
-                f"{pd_check['reason']}\n\n"
-                f"- **Nash Equilibrium Outcome:** ({game.strategies[pd_check['nash'][0]]}, {game.strategies[pd_check['nash'][1]]}) with combined payoff = **{game.payoff_a[pd_check['nash']]+game.payoff_b[pd_check['nash']]:.1f}**\n"
-                f"- **Social Optimum Outcome:** ({game.strategies[pd_check['cooperative'][0]]}, {game.strategies[pd_check['cooperative'][1]]}) with combined payoff = **{game.payoff_a[pd_check['cooperative']]+game.payoff_b[pd_check['cooperative']]:.1f}**\n"
-                f"- **Price of Anarchy (PoA):** `{pd_check['price_of_anarchy']}` (measures system efficiency loss due to selfish creator behavior)\n"
-                f"- **Lost Engagement Surplus:** `{pd_check['efficiency_loss']:.1f}` units of engagement lost to trend congestion!"
-            )
+            st.html(f"""
+            <div class="callout-box dilemma">
+                <b style="color: #f87171;">Prisoner's Dilemma Confirmed</b><br/>
+                {pd_check['reason']}<br/><br/>
+                • <b>Nash Equilibrium Outcome:</b> ({game.strategies[pd_check['nash'][0]]}, {game.strategies[pd_check['nash'][1]]}) with combined payoff = <b>{game.payoff_a[pd_check['nash']]+game.payoff_b[pd_check['nash']]:.1f}</b><br/>
+                • <b>Social Optimum Outcome:</b> ({game.strategies[pd_check['cooperative'][0]]}, {game.strategies[pd_check['cooperative'][1]]}) with combined payoff = <b>{game.payoff_a[pd_check['cooperative']]+game.payoff_b[pd_check['cooperative']]:.1f}</b><br/>
+                • <b>Price of Anarchy (PoA):</b> <code style="color:#f4f4f5; background:#27272a; padding:2px 4px;">{pd_check['price_of_anarchy']}</code><br/>
+                • <b>Lost Engagement Surplus:</b> <code style="color:#f4f4f5; background:#27272a; padding:2px 4px;">{pd_check['efficiency_loss']:.1f}</code> units of engagement lost to trend congestion
+            </div>
+            """)
         else:
-            st.info(f"**Game Classification:** {pd_check['reason']}")
+            st.html(f"""
+            <div class="callout-box info">
+                <b>Game Classification:</b> {pd_check['reason']}
+            </div>
+            """)
 
-        st.markdown("#### 💡 Academic Insight for Evaluation")
+        st.markdown("#### Academic Insight for Evaluation")
         st.markdown("""
         In real platforms like TikTok, Instagram Reels, and YouTube Shorts:
         - When a viral dance or audio trend emerges, **jumping on the trend dominates** producing high-effort original content because feeds prioritize viral sound clips.
@@ -428,9 +474,9 @@ with tab2:
 
     col_pick_a, col_pick_b = st.columns(2)
     with col_pick_a:
-        choice_a = st.selectbox("🎬 Creator A Action:", game.strategies, index=0)
+        choice_a = st.selectbox("Creator A Strategy:", game.strategies, index=0)
     with col_pick_b:
-        choice_b = st.selectbox("📹 Creator B Action:", game.strategies, index=1 if len(game.strategies) > 1 else 0)
+        choice_b = st.selectbox("Creator B Strategy:", game.strategies, index=1 if len(game.strategies) > 1 else 0)
 
     idx_a = game.strategies.index(choice_a)
     idx_b = game.strategies.index(choice_b)
@@ -445,50 +491,54 @@ with tab2:
     # Display Result Cards
     res_col1, res_col2, res_col3 = st.columns(3)
     with res_col1:
-        st.markdown(f"""
+        st.html(f"""
         <div class="metric-box">
             <div class="metric-title">Creator A Engagement</div>
             <div class="metric-value" style="color: #38bdf8;">{pay_a:.1f}</div>
             <div class="metric-sub">Strategy: {choice_a}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with res_col2:
-        st.markdown(f"""
+        st.html(f"""
         <div class="metric-box">
             <div class="metric-title">Creator B Engagement</div>
-            <div class="metric-value" style="color: #ec4899;">{pay_b:.1f}</div>
+            <div class="metric-value" style="color: #c084fc;">{pay_b:.1f}</div>
             <div class="metric-sub">Strategy: {choice_b}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with res_col3:
-        st.markdown(f"""
+        st.html(f"""
         <div class="metric-box">
             <div class="metric-title">Combined Platform Engagement</div>
-            <div class="metric-value" style="color: #f59e0b;">{tot_pay:.1f}</div>
-            <div class="metric-sub">{'🌟 Social Optimum' if is_social_cell else 'Suboptimal Allocation'}</div>
+            <div class="metric-value" style="color: #fbbf24;">{tot_pay:.1f}</div>
+            <div class="metric-sub">{'Social Optimum' if is_social_cell else 'Suboptimal Allocation'}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-    # Comparative Bar Chart
+    # Comparative Bar Chart (Subtle colors, sharp bars)
     df_chart = pd.DataFrame({
         "Participant": ["Creator A", "Creator B", "Combined Total"],
         "Engagement Score": [pay_a, pay_b, tot_pay],
-        "Color": ["#38bdf8", "#ec4899", "#f59e0b"]
+        "Color": ["#38bdf8", "#c084fc", "#fbbf24"]
     })
 
-    chart = alt.Chart(df_chart).mark_bar(cornerRadius=6, size=50).encode(
+    chart = alt.Chart(df_chart).mark_bar(cornerRadius=0, size=46).encode(
         x=alt.X("Participant:N", title=None, sort=None),
         y=alt.Y("Engagement Score:Q", title="Engagement Units"),
         color=alt.Color("Color:N", scale=None),
         tooltip=["Participant", "Engagement Score"]
-    ).properties(height=280)
+    ).properties(height=260)
 
     st.altair_chart(chart, use_container_width=True)
 
     # Strategic Diagnosis
-    st.markdown("### 📝 Strategic Diagnosis for this Selection")
+    st.markdown("### Strategic Diagnosis")
     if is_nash_cell:
-        st.success(f"**Equilibrium State!** ({choice_a}, {choice_b}) is a Nash equilibrium. Neither creator has any incentive to unilaterally defect.")
+        st.html(f"""
+        <div class="callout-box nash">
+            <b style="color: #34d399;">Equilibrium State:</b> ({choice_a}, {choice_b}) is a Nash equilibrium. Neither creator has any incentive to unilaterally defect.
+        </div>
+        """)
     else:
         deviations = []
         # Check if A can improve
@@ -497,7 +547,7 @@ with tab2:
         if idx_a not in best_rows:
             better_strat = game.strategies[best_rows[0]]
             better_gain = game.payoff_a[best_rows[0], idx_b] - curr_a
-            deviations.append(f"• **Creator A** can gain **+{better_gain:.1f}** by deviating to **{better_strat}**.")
+            deviations.append(f"• <b>Creator A</b> can gain <b>+{better_gain:.1f}</b> by deviating to <b>{better_strat}</b>.")
 
         # Check if B can improve
         curr_b = pay_b
@@ -505,11 +555,15 @@ with tab2:
         if idx_b not in best_cols:
             better_strat_b = game.strategies[best_cols[0]]
             better_gain_b = game.payoff_b[idx_a, best_cols[0]] - curr_b
-            deviations.append(f"• **Creator B** can gain **+{better_gain_b:.1f}** by deviating to **{better_strat_b}**.")
+            deviations.append(f"• <b>Creator B</b> can gain <b>+{better_gain_b:.1f}</b> by deviating to <b>{better_strat_b}</b>.")
 
-        st.warning(
-            f"**Unstable Outcome!** This state is not an equilibrium because:\n\n" + "\n".join(deviations)
-        )
+        dev_html = "<br/>".join(deviations)
+        st.html(f"""
+        <div class="callout-box warning">
+            <b style="color: #fbbf24;">Unstable Outcome:</b> This state is not an equilibrium because:<br/>
+            {dev_html}
+        </div>
+        """)
 
 
 # ==========================================
@@ -536,13 +590,13 @@ with tab3:
         agent_options.insert(2, "Always Niche (Community Specialist)")
 
     with sim_col1:
-        agent_a_type = st.selectbox("🤖 Creator A Agent Profile:", agent_options, index=2)
+        agent_a_type = st.selectbox("Creator A Strategy Profile:", agent_options, index=2)
     with sim_col2:
-        agent_b_type = st.selectbox("🤖 Creator B Agent Profile:", agent_options, index=3)
+        agent_b_type = st.selectbox("Creator B Strategy Profile:", agent_options, index=3)
     with sim_col3:
         num_rounds = st.slider("Number of Content Cycles (Rounds):", min_value=10, max_value=100, value=35, step=5)
 
-    with st.expander("⚙️ Advanced Platform Dynamics (Algorithm Luck & Fatigue)"):
+    with st.expander("Advanced Platform Dynamics (Algorithm Noise & Fatigue)"):
         env_col1, env_col2, env_col3 = st.columns(3)
         with env_col1:
             noise_std = st.slider("Platform Algorithm Volatility (Noise σ):", min_value=0.0, max_value=1.5, value=0.2, step=0.1)
@@ -551,7 +605,7 @@ with tab3:
         with env_col3:
             sim_seed = st.number_input("Random Seed (for reproducibility):", value=42, step=1)
 
-    if st.button("🚀 Run Dynamic Simulation", type="primary", use_container_width=True):
+    if st.button("Run Simulation", type="primary", use_container_width=True):
         agent_a = get_agent_by_type(agent_a_type, "Creator A", game.strategies)
         agent_b = get_agent_by_type(agent_b_type, "Creator B", game.strategies)
 
@@ -577,7 +631,7 @@ with tab3:
         kpi5.metric("Social Optimum Rate", f"{res['social_alignment_pct']}%")
 
         # Interactive Cumulative Trajectory Chart
-        st.markdown("#### 📈 Cumulative Engagement Trajectory")
+        st.markdown("#### Cumulative Engagement Trajectory")
         chart_data = pd.melt(
             df_rounds,
             id_vars=["round"],
@@ -587,47 +641,47 @@ with tab3:
         )
         chart_data["Creator"] = chart_data["Creator"].map({"cum_payoff_a": "Creator A", "cum_payoff_b": "Creator B"})
 
-        cum_chart = alt.Chart(chart_data).mark_line(strokeWidth=3, point=True).encode(
+        cum_chart = alt.Chart(chart_data).mark_line(strokeWidth=2.5, point=True).encode(
             x=alt.X("round:Q", title="Round Number"),
             y=alt.Y("Cumulative Engagement:Q", title="Cumulative Engagement Score"),
-            color=alt.Color("Creator:N", scale=alt.Scale(domain=["Creator A", "Creator B"], range=["#38bdf8", "#ec4899"])),
+            color=alt.Color("Creator:N", scale=alt.Scale(domain=["Creator A", "Creator B"], range=["#38bdf8", "#c084fc"])),
             tooltip=["round", "Creator", "Cumulative Engagement"]
-        ).properties(height=340)
+        ).properties(height=320)
 
         st.altair_chart(cum_chart, use_container_width=True)
 
         # Strategy Selection Breakdown
-        st.markdown("#### 📊 Strategy Adoption Distribution")
+        st.markdown("#### Strategy Adoption Distribution")
         strat_col1, strat_col2 = st.columns(2)
 
         with strat_col1:
             strat_counts_a = df_rounds["strategy_a"].value_counts().reset_index()
             strat_counts_a.columns = ["Strategy", "Count"]
-            bar_a = alt.Chart(strat_counts_a).mark_bar(cornerRadius=5).encode(
+            bar_a = alt.Chart(strat_counts_a).mark_bar(cornerRadius=0).encode(
                 x=alt.X("Strategy:N"),
                 y=alt.Y("Count:Q", title="Frequency"),
                 color=alt.value("#38bdf8"),
                 tooltip=["Strategy", "Count"]
-            ).properties(title="Creator A Strategy Frequency", height=240)
+            ).properties(title="Creator A Strategy Frequency", height=230)
             st.altair_chart(bar_a, use_container_width=True)
 
         with strat_col2:
             strat_counts_b = df_rounds["strategy_b"].value_counts().reset_index()
             strat_counts_b.columns = ["Strategy", "Count"]
-            bar_b = alt.Chart(strat_counts_b).mark_bar(cornerRadius=5).encode(
+            bar_b = alt.Chart(strat_counts_b).mark_bar(cornerRadius=0).encode(
                 x=alt.X("Strategy:N"),
                 y=alt.Y("Count:Q", title="Frequency"),
-                color=alt.value("#ec4899"),
+                color=alt.value("#c084fc"),
                 tooltip=["Strategy", "Count"]
-            ).properties(title="Creator B Strategy Frequency", height=240)
+            ).properties(title="Creator B Strategy Frequency", height=230)
             st.altair_chart(bar_b, use_container_width=True)
 
         # Round History Table
-        with st.expander("📋 View Detailed Round Log & Download Data"):
+        with st.expander("View Round Log & Export Data"):
             st.dataframe(df_rounds[["round", "strategy_a", "strategy_b", "payoff_a", "payoff_b", "cum_payoff_a", "cum_payoff_b", "is_nash", "is_social_optimum"]], use_container_width=True)
             csv = df_rounds.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Download Simulation CSV",
+                label="Download Simulation CSV",
                 data=csv,
                 file_name="social_media_game_theory_simulation.csv",
                 mime="text/csv"
@@ -638,7 +692,7 @@ with tab3:
 # TAB 4: HUMAN VS AI CREATOR ARENA
 # ==========================================
 with tab4:
-    st.subheader("4. 🎮 Play Against AI Creator")
+    st.subheader("4. Play Against AI Competitor")
     st.markdown("""
     Step into the shoes of **Creator A**! Choose your content strategy round-by-round against an adaptive AI algorithm (**Creator B**)
     and see if you fall into the viral rat race or succeed in establishing mutual cooperation.
@@ -662,8 +716,8 @@ with tab4:
         user_choice = st.radio("Content Strategy:", game.strategies, horizontal=True)
 
         col_btn1, col_btn2 = st.columns(2)
-        submit_post = col_btn1.button("🚀 Publish Post", type="primary")
-        reset_game = col_btn2.button("🔄 Reset Match")
+        submit_post = col_btn1.button("Publish Post", type="primary")
+        reset_game = col_btn2.button("Reset Match")
 
         if reset_game:
             st.session_state.arena_history.clear()
@@ -733,18 +787,18 @@ with tab4:
 
             # Coaching feedback
             if last_round["user_choice"] == "Trending" and last_round["ai_choice"] == "Trending":
-                st.warning("⚠️ **Viral Cannibalization!** Both of you jumped on the same trend, diluting feed reach to (3.0, 3.0).")
+                st.warning("**Viral Cannibalization:** Both of you jumped on the same trend, diluting feed reach to (3.0, 3.0).")
             elif last_round["user_choice"] == "Original" and last_round["ai_choice"] == "Original":
-                st.success("🎉 **Creative Synergy!** Both invested in original content, maximizing combined engagement (5.0, 5.0)!")
+                st.success("**Creative Synergy:** Both invested in original content, maximizing combined engagement (5.0, 5.0).")
             elif last_round["user_choice"] == "Trending" and last_round["ai_choice"] == "Original":
-                st.info("⚡ **Viral Steal!** You capitalized on the trend while AI built high-effort original content, granting you peak views (+6.0).")
+                st.info("**Viral Advantage:** You capitalized on the trend while AI built high-effort original content, granting you peak views (+6.0).")
 
 
 # ==========================================
 # TAB 5: PROJECT REPORT & VIVA GUIDE
 # ==========================================
 with tab5:
-    st.subheader("5. 📑 10-Mark Evaluation Academic Report")
+    st.subheader("5. Academic Project Report")
     st.markdown("""
     This section synthesizes the complete academic write-up for your project presentation and viva examination.
     """)
@@ -797,19 +851,19 @@ with tab5:
     ### 7. Viva Q&A Cheat-Sheet (Common Professor Questions)
     """)
 
-    with st.expander("❓ Q1: Why is (Trending, Trending) a Nash Equilibrium if (Original, Original) gives higher payoffs?"):
+    with st.expander("Q1: Why is (Trending, Trending) a Nash Equilibrium if (Original, Original) gives higher payoffs?"):
         st.markdown("""
         **Answer:** A Nash equilibrium requires that *no player has a unilateral incentive to deviate*.
         At $(Original, Original) = (5, 5)$, if Creator A unilaterally switches to *Trending*, their payoff jumps to $6$.
         Because each creator seeks to maximize their own individual engagement, both are drawn into defection, landing at $(3, 3)$ where neither can improve by deviating alone.
         """)
 
-    with st.expander("❓ Q2: What happens when we introduce a third strategy like 'Niche Audience'?"):
+    with st.expander("Q2: What happens when we introduce a third strategy like 'Niche Audience'?"):
         st.markdown("""
         **Answer:** In the 3x3 model, *Niche* provides audience differentiation. Even when a rival plays Trending, a Niche creator retains a loyal subculture payoff $(4)$, preventing total feed extinction and mitigating the harshness of the Prisoner's Dilemma.
         """)
 
-    with st.expander("❓ Q3: How do platforms influence this equilibrium?"):
+    with st.expander("Q3: How do platforms influence this equilibrium?"):
         st.markdown("""
         **Answer:** Platform recommendation algorithms dictate the payoff matrix. If platforms introduce algorithmic fatigue penalties or reward original creation with higher distribution coefficients, they can alter payoffs such that $(Original, Original)$ becomes the dominant Nash equilibrium!
         """)
