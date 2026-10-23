@@ -45,6 +45,7 @@ Game Theory allows us to formally model these strategic interactions, identify s
 | **Dominant strategy** | Check whether one strategy is always better. |
 | **Nash equilibrium** | Find the outcome where neither creator benefits by changing strategy alone. |
 | **Pareto optimality** | Compare individual incentives with the best combined outcome. |
+| **Repeated-form game** | Simulate iterated competition to test if reciprocal strategies (Tit-for-Tat) sustain mutual cooperation. |
 
 ---
 
