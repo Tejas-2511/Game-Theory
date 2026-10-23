@@ -36,6 +36,16 @@ In algorithmic social platforms, competing creators vie for finite viewer attent
 
 Game Theory allows us to formally model these strategic interactions, identify stable outcomes (Nash Equilibria), and quantify the systemic inefficiencies of attention competition.
 
+## 📚 Syllabus Concept Mapping
+
+| Syllabus concept | How we'll use it |
+| :--- | :--- |
+| **Normal-form game** | Represent two content creators and their strategies in a payoff matrix. |
+| **Strategies and payoffs** | Compare Trending vs Original content. |
+| **Dominant strategy** | Check whether one strategy is always better. |
+| **Nash equilibrium** | Find the outcome where neither creator benefits by changing strategy alone. |
+| **Pareto optimality** | Compare individual incentives with the best combined outcome. |
+
 ---
 
 ## 🧠 The Game Theory Model
