@@ -167,87 +167,102 @@ st.sidebar.markdown("Game parameters and payoff settings.")
 
 game_type = st.sidebar.radio(
     "Game Complexity",
-    ["2x2 Standard (Trending vs Original)", "3x3 Extended (Trending, Original, Niche)", "Custom Matrix Editor"],
+    ["2x2 Standard (Trending vs Original)", "3x3 Extended (Trending, Original, Niche)"],
     index=0
 )
 
-# Presets for 2x2
-preset_choice = "Custom"
+# Presets definition
+PRESETS_2X2 = {
+    "Prisoner's Dilemma (Viral Rat Race - Default)": (
+        np.array([[3.0, 6.0], [2.0, 5.0]]),
+        np.array([[3.0, 2.0], [6.0, 5.0]])
+    ),
+    "Stag Hunt (Mutual High Quality Rewards)": (
+        np.array([[2.0, 2.0], [0.0, 5.0]]),
+        np.array([[2.0, 0.0], [2.0, 5.0]])
+    ),
+    "Hawk-Dove / Chicken (Audience Congestion)": (
+        np.array([[1.0, 6.0], [2.0, 4.0]]),
+        np.array([[1.0, 2.0], [6.0, 4.0]])
+    ),
+    "Custom Matrix": (
+        np.array([[3.0, 6.0], [2.0, 5.0]]),
+        np.array([[3.0, 2.0], [6.0, 5.0]])
+    )
+}
+
+PRESETS_3X3 = {
+    "Standard 3x3 (Trending, Original, Niche)": (
+        np.array([
+            [3.0, 6.0, 5.0],
+            [2.0, 5.0, 4.0],
+            [4.0, 4.0, 3.0]
+        ]),
+        np.array([
+            [3.0, 2.0, 4.0],
+            [6.0, 5.0, 4.0],
+            [5.0, 4.0, 3.0]
+        ])
+    ),
+    "Custom Matrix": (
+        np.array([
+            [3.0, 6.0, 5.0],
+            [2.0, 5.0, 4.0],
+            [4.0, 4.0, 3.0]
+        ]),
+        np.array([
+            [3.0, 2.0, 4.0],
+            [6.0, 5.0, 4.0],
+            [5.0, 4.0, 3.0]
+        ])
+    )
+}
+
 if game_type == "2x2 Standard (Trending vs Original)":
+    strategies = ["Trending", "Original"]
     preset_choice = st.sidebar.selectbox(
         "Game Preset Scenario",
-        [
-            "Prisoner's Dilemma (Viral Rat Race - Default)",
-            "Stag Hunt (Mutual High Quality Rewards)",
-            "Hawk-Dove / Chicken (Audience Congestion)",
-            "Custom Values"
-        ]
+        list(PRESETS_2X2.keys()),
+        index=0
     )
-
-# Payoffs state management
-if "custom_p_a_2x2" not in st.session_state:
-    st.session_state.custom_p_a_2x2 = np.array([[3.0, 6.0], [2.0, 5.0]])
-    st.session_state.custom_p_b_2x2 = np.array([[3.0, 2.0], [6.0, 5.0]])
-
-if "custom_p_a_3x3" not in st.session_state:
-    st.session_state.custom_p_a_3x3 = np.array([
-        [3.0, 6.0, 5.0],
-        [2.0, 5.0, 4.0],
-        [4.0, 4.0, 3.0]
-    ])
-    st.session_state.custom_p_b_3x3 = np.array([
-        [3.0, 2.0, 4.0],
-        [6.0, 5.0, 4.0],
-        [5.0, 4.0, 3.0]
-    ])
-
-# Apply preset values
-if game_type == "2x2 Standard (Trending vs Original)":
-    if preset_choice == "Prisoner's Dilemma (Viral Rat Race - Default)":
-        p_a = np.array([[3.0, 6.0], [2.0, 5.0]])
-        p_b = np.array([[3.0, 2.0], [6.0, 5.0]])
-    elif preset_choice == "Stag Hunt (Mutual High Quality Rewards)":
-        p_a = np.array([[2.0, 2.0], [0.0, 5.0]])
-        p_b = np.array([[2.0, 0.0], [2.0, 5.0]])
-    elif preset_choice == "Hawk-Dove / Chicken (Audience Congestion)":
-        p_a = np.array([[1.0, 6.0], [2.0, 4.0]])
-        p_b = np.array([[1.0, 2.0], [6.0, 4.0]])
-    else:  # Custom Values
-        st.sidebar.markdown("### Edit Payoff Matrix (2x2)")
-        col1, col2 = st.sidebar.columns(2)
-        with col1:
-            st.caption("**Creator A Payoffs**")
-            t_t_a = st.number_input("A: Trend/Trend", value=3.0, step=0.5)
-            t_o_a = st.number_input("A: Trend/Orig", value=6.0, step=0.5)
-            o_t_a = st.number_input("A: Orig/Trend", value=2.0, step=0.5)
-            o_o_a = st.number_input("A: Orig/Orig", value=5.0, step=0.5)
-            p_a = np.array([[t_t_a, t_o_a], [o_t_a, o_o_a]])
-        with col2:
-            st.caption("**Creator B Payoffs**")
-            t_t_b = st.number_input("B: Trend/Trend", value=3.0, step=0.5)
-            t_o_b = st.number_input("B: Trend/Orig", value=2.0, step=0.5)
-            o_t_b = st.number_input("B: Orig/Trend", value=6.0, step=0.5)
-            o_o_b = st.number_input("B: Orig/Orig", value=5.0, step=0.5)
-            p_b = np.array([[t_t_b, t_o_b], [o_t_b, o_o_b]])
-
-    game = GameModel(["Trending", "Original"], p_a, p_b)
-
-elif game_type == "3x3 Extended (Trending, Original, Niche)":
-    game = GameModel.create_3x3_extended()
+    dim = 2
 else:
-    # Custom Matrix Editor
-    st.sidebar.markdown("### Custom 3x3 Payoff Matrix")
-    strategies_custom = ["Trending", "Original", "Niche"]
-    p_a_cust = np.copy(st.session_state.custom_p_a_3x3)
-    p_b_cust = np.copy(st.session_state.custom_p_b_3x3)
+    strategies = ["Trending", "Original", "Niche"]
+    preset_choice = st.sidebar.selectbox(
+        "Game Preset Scenario",
+        list(PRESETS_3X3.keys()),
+        index=0
+    )
+    dim = 3
 
-    st.sidebar.markdown("Modify Creator A & B payoffs:")
-    for i, s1 in enumerate(strategies_custom):
-        for j, s2 in enumerate(strategies_custom):
-            col1, col2 = st.sidebar.columns(2)
-            p_a_cust[i, j] = col1.number_input(f"A: ({s1}, {s2})", value=float(p_a_cust[i, j]), step=0.5, key=f"ca_{i}_{j}")
-            p_b_cust[i, j] = col2.number_input(f"B: ({s1}, {s2})", value=float(p_b_cust[i, j]), step=0.5, key=f"cb_{i}_{j}")
-    game = GameModel(strategies_custom, p_a_cust, p_b_cust)
+# Synchronize session state with chosen preset if preset changed
+config_tracker = f"{game_type}::{preset_choice}"
+if st.session_state.get("active_config_tracker") != config_tracker:
+    st.session_state.active_config_tracker = config_tracker
+    defaults_a, defaults_b = PRESETS_2X2[preset_choice] if dim == 2 else PRESETS_3X3[preset_choice]
+    for i in range(dim):
+        for j in range(dim):
+            st.session_state[f"pm_a_{dim}_{i}_{j}"] = float(defaults_a[i, j])
+            st.session_state[f"pm_b_{dim}_{i}_{j}"] = float(defaults_b[i, j])
+
+# Quick reset button in sidebar
+if st.sidebar.button("↺ Reset Matrix to Defaults", help="Reset all values to the current preset defaults"):
+    defaults_a, defaults_b = PRESETS_2X2[preset_choice] if dim == 2 else PRESETS_3X3[preset_choice]
+    for i in range(dim):
+        for j in range(dim):
+            st.session_state[f"pm_a_{dim}_{i}_{j}"] = float(defaults_a[i, j])
+            st.session_state[f"pm_b_{dim}_{i}_{j}"] = float(defaults_b[i, j])
+    st.rerun()
+
+# Build current payoff matrices from session state
+p_a = np.zeros((dim, dim))
+p_b = np.zeros((dim, dim))
+for i in range(dim):
+    for j in range(dim):
+        p_a[i, j] = st.session_state.get(f"pm_a_{dim}_{i}_{j}", 0.0)
+        p_b[i, j] = st.session_state.get(f"pm_b_{dim}_{i}_{j}", 0.0)
+
+game = GameModel(strategies, p_a, p_b)
 
 
 # App Header (Clean & Minimalist)
@@ -316,12 +331,43 @@ with col4:
 # PAYOFF MATRIX & EQUILIBRIUM ANALYSIS
 # ==========================================
 st.subheader("Normal-Form Strategy Profiles & Payoff Matrix")
-st.markdown("""
+st.markdown(f"""
 Competition for viewer attention is modeled as a 2-player strategic normal-form game:
-- **Game Formulation:** `G = ⟨N, S, u⟩` where `N = {Creator A, Creator B}`
-- **Strategy Sets:** `S = {Trending, Original}` (viral aggregator vs. original quality)
+- **Game Formulation:** `G = ⟨N, S, u⟩` where `N = {{Creator A, Creator B}}`
+- **Strategy Sets:** `S = {{{", ".join(game.strategies)}}}`
 - **Payoffs:** Matrix cells `(u_A, u_B)` quantify audience reach, retention, and viewer engagement
 """)
+
+# Interactive in-place Matrix Editor
+with st.expander("✏️ Modify Payoff Matrix Values (Live Interactive Editor)", expanded=(preset_choice == "Custom Matrix")):
+    st.markdown("""
+    Customize payoffs for any strategy profile below. Payoffs are specified as `(Creator A, Creator B)`:
+    - <span style="color:#38bdf8; font-weight:600;">Creator A (Blue)</span>: Row player payoff
+    - <span style="color:#c084fc; font-weight:600;">Creator B (Purple)</span>: Column player payoff
+    <br/><small style="color:#71717a;">Editing any value triggers immediate real-time recalculation of Nash equilibria, dominance, Pareto efficiency, and best responses.</small>
+    """, unsafe_allow_html=True)
+    
+    for i, strat_a in enumerate(game.strategies):
+        st.markdown(f"**When Creator A plays `{strat_a}`:**")
+        cols = st.columns(dim)
+        for j, strat_b in enumerate(game.strategies):
+            with cols[j]:
+                st.caption(f"vs Creator B: **{strat_b}**")
+                sub_a, sub_b = st.columns(2)
+                sub_a.number_input(
+                    f"A: ({strat_a}, {strat_b})",
+                    step=0.5,
+                    format="%.1f",
+                    key=f"pm_a_{dim}_{i}_{j}",
+                    help=f"Payoff to Creator A for ({strat_a}, {strat_b})"
+                )
+                sub_b.number_input(
+                    f"B: ({strat_a}, {strat_b})",
+                    step=0.5,
+                    format="%.1f",
+                    key=f"pm_b_{dim}_{i}_{j}",
+                    help=f"Payoff to Creator B for ({strat_a}, {strat_b})"
+                )
 
 best_a = game.get_best_responses_a()
 best_b = game.get_best_responses_b()
@@ -500,8 +546,13 @@ if st.button("Simulate Repeated Game", type="primary", use_container_width=True)
     simulator = MultiRoundSimulator(game, sim_a, sim_b)
     rep_results = simulator.run_simulation(num_rounds=rep_rounds, noise_std=0.0, trend_fatigue_decay=0.0, seed=42)
     st.session_state.rep_results = rep_results
+    st.session_state.rep_sim_matrix = (tuple(p_a.flatten()), tuple(p_b.flatten()))
 
 if "rep_results" in st.session_state:
+    current_matrix = (tuple(p_a.flatten()), tuple(p_b.flatten()))
+    if st.session_state.get("rep_sim_matrix") != current_matrix:
+        st.info("ℹ️ **Payoff Matrix Modified:** The matrix values above were changed since this simulation was run. Click **Simulate Repeated Game** to recalculate the multi-round trajectory with the new payoffs.")
+
     res = st.session_state.rep_results
     df_rounds = pd.DataFrame(res["rounds"])
 

@@ -86,7 +86,7 @@ The interactive dashboard includes 5 comprehensive modules:
 1. **📊 Strategic Matrix & Equilibrium Solver**:
    - Interactive normal-form payoff matrix with visual indicator badges for Best Responses (BR A / BR B), Nash Equilibria, and Social Optima.
    - Mixed-strategy Nash equilibrium derivation with indifference formulas.
-   - Scenario presets (Prisoner's Dilemma, Stag Hunt, Hawk-Dove) plus full 3×3 matrix editor.
+   - Scenario presets (Prisoner's Dilemma, Stag Hunt, Hawk-Dove) plus full live in-place matrix customization allowing real-time re-solving of equilibria and dynamics.
 2. **🎯 Single-Round What-If Sandbox**:
    - Select strategies for both creators in real-time.
    - Immediate feedback showing whether an outcome is stable or which creator has an incentive to defect.
