@@ -353,7 +353,7 @@ Competition for viewer attention is modeled as a 2-player strategic normal-form 
 """)
 
 # Interactive in-place Matrix Editor
-with st.expander("✏️ Modify Payoff Matrix Values (Live Interactive Editor)", expanded=(preset_choice == "Custom Matrix")):
+with st.expander("Modify Payoff Matrix Values (Live Interactive Editor)", expanded=(preset_choice == "Custom Matrix")):
     st.markdown("""
     Customize payoffs for any strategy profile below. Payoffs are specified as `(Creator A, Creator B)`:
     - <span style="color:#38bdf8; font-weight:600;">Creator A (Blue)</span>: Row player payoff
@@ -521,13 +521,3 @@ with col_right:
         </div>
         """)
 
-st.markdown("---")
-st.subheader("Repeated Game Extension: The Folk Theorem")
-st.html("""
-<div class="callout-box nash">
-    <b style="color: #34d399;">Folk Theorem Extension: Sustaining Mutual Quality</b><br/>
-    • <b>One-Shot Dilemma:</b> Chasing trends strictly dominates in a single-shot game, trapping creators at (3.0, 3.0).<br/>
-    • <b>Repeated Interaction:</b> When competition is ongoing, creators can sustain cooperation at (5.0, 5.0).<br/>
-    • <b>Core Condition:</b> If creators value future audience retention enough (discount factor <code>&delta; &ge; 0.33</code>) and deviations face credible retaliation, mutual high quality becomes self-enforcing.
-</div>
-""")

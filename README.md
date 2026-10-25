@@ -48,7 +48,6 @@ Game Theory allows us to formally model these strategic interactions, identify s
 | **Nash Equilibrium** | Solve for pure and mixed strategy equilibria where neither creator can unilaterally improve. |
 | **Pareto Optimality** | Contrast individual selfish rationality $(3, 3)$ with the social optimum $(5, 5)$. |
 | **Price of Anarchy (PoA)** | Quantify the welfare destruction ($\text{PoA} \approx 1.67$, $\sim 40\%$ loss) of uncoordinated competition. |
-| **Folk Theorem** | Theoretical extension explaining how repeated interaction and future rewards can sustain mutual quality. |
 
 ---
 
@@ -81,9 +80,8 @@ Included in the theory guide:
 2. Formal Game-Theoretic Mathematical Definition
 3. Mathematical Proofs (Best-Response, Dominance, Pure Nash, Mixed-Strategy Indifference, Pareto Dominance, Price of Anarchy)
 4. Game Typology (Prisoner's Dilemma, Stag Hunt, Hawk-Dove, 3×3 Extended Model)
-5. Repeated Game Extension: The Folk Theorem (Finite unravelling vs. Infinite $\delta$, Mathematical proof of $\delta^* \approx 0.33$, Axelrod's Tit-for-Tat principles)
-6. Platform Mechanism Design & Policy Implications
-7. Viva & Examiner Q&A Cheat-Sheet (Top 5 examiner questions & answers)
+5. Platform Mechanism Design & Policy Implications
+6. Viva & Examiner Q&A Cheat-Sheet (Top 5 examiner questions & answers)
 
 ---
 
@@ -95,7 +93,6 @@ The interactive dashboard provides a unified, real-time computational environmen
 3. **Scenario Presets:** Instant loading for *Prisoner's Dilemma*, *Stag Hunt*, *Hawk-Dove*, and *3x3 Extended*.
 4. **Dominance & Mixed Strategies:** Analytical tests for strictly/weakly dominant strategies and mixed-strategy Nash equilibrium derivations.
 5. **Pareto Optimality & Price of Anarchy:** Quantifies efficiency loss and Price of Anarchy (PoA) resulting from selfish individual incentives.
-6. **Folk Theorem Extension:** Short theoretical callout connecting one-shot competition to ongoing repeated interaction.
 
 ---
 
