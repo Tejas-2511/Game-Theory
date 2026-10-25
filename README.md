@@ -120,11 +120,3 @@ Game Theory/
 
 ---
 
-## 🎓 Viva Q&A Highlights
-
-- **Q: Why is (Trending, Trending) a Nash equilibrium if (Original, Original) gives higher payoffs?**
-  - **A:** In a Nash equilibrium, no player can unilaterally deviate to improve their score. At $(Original, Original) = (5, 5)$, if Creator A unilaterally switches to *Trending*, their score jumps from $5$ to $6$. Both creators have this private incentive, drawing them into the $(3, 3)$ defect state.
-- **Q: How does the iterated game resolve this dilemma?**
-  - **A:** According to the **Folk Theorem**, in repeated games where creators care about future payoffs, reciprocal strategies like **Tit-for-Tat** can sustain mutual cooperation $(Original, Original)$ through the credible threat of retaliatory trend spamming.
-- **Q: What role does the platform algorithm play?**
-  - **A:** The recommendation algorithm defines the payoff matrix. If platforms implement fatigue penalties for redundant trend copies, they shift the incentives so that high-quality original content becomes the dominant strategy.
