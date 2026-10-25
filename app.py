@@ -6,9 +6,7 @@ Interactive Streamlit Application for 10-Mark Academic Evaluation.
 import streamlit as st
 import numpy as np
 import pandas as pd
-import altair as alt
 from game_theory import GameModel
-from simulation import MultiRoundSimulator, get_agent_by_type
 
 # Page setup
 st.set_page_config(
@@ -167,21 +165,21 @@ st.sidebar.markdown("Game parameters and payoff settings.")
 
 game_type = st.sidebar.radio(
     "Game Complexity",
-    ["2x2 Standard (Trending vs Original)", "3x3 Extended (Trending, Original, Niche)"],
+    ["2x2 (Trending vs Original)", "3x3 (Trending, Original, Niche)"],
     index=0
 )
 
 # Presets definition
 PRESETS_2X2 = {
-    "Prisoner's Dilemma (Viral Rat Race - Default)": (
+    "Prisoner's Dilemma": (
         np.array([[3.0, 6.0], [2.0, 5.0]]),
         np.array([[3.0, 2.0], [6.0, 5.0]])
     ),
-    "Stag Hunt (Mutual High Quality Rewards)": (
+    "Stag Hunt": (
         np.array([[2.0, 2.0], [0.0, 5.0]]),
         np.array([[2.0, 0.0], [2.0, 5.0]])
     ),
-    "Hawk-Dove / Chicken (Audience Congestion)": (
+    "Hawk-Dove": (
         np.array([[1.0, 6.0], [2.0, 4.0]]),
         np.array([[1.0, 2.0], [6.0, 4.0]])
     ),
@@ -191,8 +189,15 @@ PRESETS_2X2 = {
     )
 }
 
+PRESET_DESCRIPTIONS_2X2 = {
+    "Prisoner's Dilemma": "Viral rat race: trending dominates, harming mutual payoff.",
+    "Stag Hunt": "Coordination game: mutual high quality yields top payoff.",
+    "Hawk-Dove": "Audience congestion: mutual trending is penalized.",
+    "Custom Matrix": "Interactive matrix: enter your own payoff values."
+}
+
 PRESETS_3X3 = {
-    "Standard 3x3 (Trending, Original, Niche)": (
+    "Standard 3x3": (
         np.array([
             [3.0, 6.0, 5.0],
             [2.0, 5.0, 4.0],
@@ -218,21 +223,30 @@ PRESETS_3X3 = {
     )
 }
 
-if game_type == "2x2 Standard (Trending vs Original)":
+PRESET_DESCRIPTIONS_3X3 = {
+    "Standard 3x3": "Trending, Original, and Niche content interaction.",
+    "Custom Matrix": "Interactive matrix: enter your own payoff values."
+}
+
+if game_type == "2x2 (Trending vs Original)":
     strategies = ["Trending", "Original"]
     preset_choice = st.sidebar.selectbox(
         "Game Preset Scenario",
         list(PRESETS_2X2.keys()),
-        index=0
+        index=0,
+        key="preset_2x2"
     )
+    st.sidebar.caption(PRESET_DESCRIPTIONS_2X2[preset_choice])
     dim = 2
 else:
     strategies = ["Trending", "Original", "Niche"]
     preset_choice = st.sidebar.selectbox(
         "Game Preset Scenario",
         list(PRESETS_3X3.keys()),
-        index=0
+        index=0,
+        key="preset_3x3"
     )
+    st.sidebar.caption(PRESET_DESCRIPTIONS_3X3[preset_choice])
     dim = 3
 
 # Synchronize session state with chosen preset if preset changed
@@ -471,10 +485,10 @@ with col_left:
     """)
 
     # Mixed Strategy calculation if 2x2
-    mixed_res = game.calculate_mixed_nash_2x2()
-    if mixed_res:
+    if dim == 2:
+        mixed_res = game.calculate_mixed_nash_2x2()
         st.markdown("#### Mixed-Strategy Nash Equilibrium")
-        if mixed_res["is_valid_internal"]:
+        if mixed_res and mixed_res["is_valid_internal"]:
             st.html(f"""
             <div class="callout-box info">
                 <b>Mixed-Strategy Randomization:</b><br/>
@@ -484,7 +498,7 @@ with col_left:
             </div>
             """)
         else:
-            st.caption("Dominant pure strategies preclude an interior mixed-strategy equilibrium.")
+            st.caption("No interior mixed-strategy Nash equilibrium exists (strictly dominant pure strategies dictate deterministic play).")
 
 with col_right:
     st.markdown("### Pareto Optimality & Welfare Inefficiency")
@@ -495,7 +509,7 @@ with col_right:
             • <b>Pareto Optimality:</b> An outcome is Pareto optimal if no player can be made better off without reducing the payoff of another.<br/>
             • <b>Social / Pareto Optimum:</b> ({game.strategies[pd_check['cooperative'][0]]}, {game.strategies[pd_check['cooperative'][1]]}) with combined payoff = <b>{game.payoff_a[pd_check['cooperative']]+game.payoff_b[pd_check['cooperative']]:.1f}</b>.<br/>
             • <b>Nash Equilibrium Outcome:</b> ({game.strategies[pd_check['nash'][0]]}, {game.strategies[pd_check['nash'][1]]}) with combined payoff = <b>{game.payoff_a[pd_check['nash']]+game.payoff_b[pd_check['nash']]:.1f}</b>.<br/>
-            • <b>Inefficiency:</b> The Nash Equilibrium is strictly Pareto dominated: <code>(5.0, 5.0) &gt; (3.0, 3.0)</code>. Individual rationality creates a collectively suboptimal outcome.<br/>
+            • <b>Inefficiency:</b> The Nash Equilibrium is strictly Pareto dominated: <code>({game.payoff_a[pd_check['cooperative']]:.1f}, {game.payoff_b[pd_check['cooperative']]:.1f}) &gt; ({game.payoff_a[pd_check['nash']]:.1f}, {game.payoff_b[pd_check['nash']]:.1f})</code>. Individual rationality creates a collectively suboptimal outcome.<br/>
             • <b>Price of Anarchy (PoA):</b> <code style="color:#f4f4f5; background:#27272a; padding:2px 4px;">PoA = Social Max / Worst Nash = {pd_check['price_of_anarchy']}</code> (Efficiency loss: {pd_check['efficiency_loss']:.1f} units).
         </div>
         """)
@@ -507,122 +521,13 @@ with col_right:
         </div>
         """)
 
-    st.markdown("#### Real-World Content Platform Application")
-    st.markdown("""
-    On algorithmic platforms like TikTok, Instagram Reels, and YouTube Shorts:
-    - **Algorithmic Bias:** Platforms incentivize trend-jacking by rewarding viral sound clips with quick reach, making Trending dominant for individuals.
-    - **Audience Congestion:** When both creators jump on identical trends, audiences experience fatigue, resulting in fragmented engagement (3.0, 3.0) instead of (5.0, 5.0).
-    """)
-
 st.markdown("---")
-# ==========================================
-# REPEATED-FORM GAME DYNAMICS
-# ==========================================
-st.subheader("Repeated-Form Game: Multi-Round Dynamic Competition")
-st.markdown("""
-While single-shot games trap rational creators in mutual defection (*Trending*), a **repeated-form game** extends competition over multiple sequential rounds. 
-Under the **Folk Theorem**, the shadow of the future enables creators to sustain mutual cooperation (*Original*, *Original*) as a subgame perfect equilibrium through reciprocal strategies like **Tit-for-Tat**.
+st.subheader("Repeated Game Extension: The Folk Theorem")
+st.html("""
+<div class="callout-box nash">
+    <b style="color: #34d399;">Folk Theorem Extension: Sustaining Mutual Quality</b><br/>
+    • <b>One-Shot Dilemma:</b> Chasing trends strictly dominates in a single-shot game, trapping creators at (3.0, 3.0).<br/>
+    • <b>Repeated Interaction:</b> When competition is ongoing, creators can sustain cooperation at (5.0, 5.0).<br/>
+    • <b>Core Condition:</b> If creators value future audience retention enough (discount factor <code>&delta; &ge; 0.33</code>) and deviations face credible retaliation, mutual high quality becomes self-enforcing.
+</div>
 """)
-
-col_sim_a, col_sim_b, col_sim_r = st.columns([1.5, 1.5, 1.2])
-
-agent_choices = [
-    "Tit-for-Tat (Reciprocal Cooperator)",
-    "Always Trending (Viral Chaser)",
-    "Always Original (Quality Purist)",
-    "Best-Response Learner (Greedy Adaptor)"
-]
-
-with col_sim_a:
-    rep_agent_a = st.selectbox("Creator A Strategy Profile:", agent_choices, index=0, key="rep_a")
-with col_sim_b:
-    rep_agent_b = st.selectbox("Creator B Strategy Profile:", agent_choices, index=0, key="rep_b")
-with col_sim_r:
-    rep_rounds = st.slider("Content Rounds:", min_value=10, max_value=50, value=25, step=5, key="rep_rounds")
-
-if st.button("Simulate Repeated Game", type="primary", use_container_width=True):
-    sim_a = get_agent_by_type(rep_agent_a, "Creator A", game.strategies)
-    sim_b = get_agent_by_type(rep_agent_b, "Creator B", game.strategies)
-    simulator = MultiRoundSimulator(game, sim_a, sim_b)
-    rep_results = simulator.run_simulation(num_rounds=rep_rounds, noise_std=0.0, trend_fatigue_decay=0.0, seed=42)
-    st.session_state.rep_results = rep_results
-    st.session_state.rep_sim_matrix = (tuple(p_a.flatten()), tuple(p_b.flatten()))
-
-if "rep_results" in st.session_state:
-    current_matrix = (tuple(p_a.flatten()), tuple(p_b.flatten()))
-    if st.session_state.get("rep_sim_matrix") != current_matrix:
-        st.info("ℹ️ **Payoff Matrix Modified:** The matrix values above were changed since this simulation was run. Click **Simulate Repeated Game** to recalculate the multi-round trajectory with the new payoffs.")
-
-    res = st.session_state.rep_results
-    df_rounds = pd.DataFrame(res["rounds"])
-
-    # Compact KPI cards
-    k1, k2, k3, k4 = st.columns(4)
-    with k1:
-        st.html(f"""
-        <div class="metric-box">
-            <div class="metric-title">Creator A Total Payoff</div>
-            <div class="metric-value" style="color: #38bdf8;">{res['total_payoff_a']}</div>
-            <div class="metric-sub">Avg: {res['avg_payoff_a']}/round</div>
-        </div>
-        """)
-    with k2:
-        st.html(f"""
-        <div class="metric-box">
-            <div class="metric-title">Creator B Total Payoff</div>
-            <div class="metric-value" style="color: #c084fc;">{res['total_payoff_b']}</div>
-            <div class="metric-sub">Avg: {res['avg_payoff_b']}/round</div>
-        </div>
-        """)
-    with k3:
-        st.html(f"""
-        <div class="metric-box">
-            <div class="metric-title">Cooperation Rate</div>
-            <div class="metric-value" style="color: #fbbf24;">{res['social_alignment_pct']}%</div>
-            <div class="metric-sub">Mutual Original content</div>
-        </div>
-        """)
-    with k4:
-        st.html(f"""
-        <div class="metric-box">
-            <div class="metric-title">Defection Rate</div>
-            <div class="metric-value" style="color: #34d399;">{res['nash_alignment_pct']}%</div>
-            <div class="metric-sub">Mutual Trend chasing</div>
-        </div>
-        """)
-
-    # Compact Line Chart
-    chart_data = pd.melt(
-        df_rounds,
-        id_vars=["round"],
-        value_vars=["cum_payoff_a", "cum_payoff_b"],
-        var_name="Creator",
-        value_name="Cumulative Engagement"
-    )
-    chart_data["Creator"] = chart_data["Creator"].map({"cum_payoff_a": "Creator A", "cum_payoff_b": "Creator B"})
-
-    rep_chart = alt.Chart(chart_data).mark_line(strokeWidth=2.5, point=True).encode(
-        x=alt.X("round:Q", title="Round Number"),
-        y=alt.Y("Cumulative Engagement:Q", title="Cumulative Engagement"),
-        color=alt.Color("Creator:N", scale=alt.Scale(domain=["Creator A", "Creator B"], range=["#38bdf8", "#c084fc"])),
-        tooltip=["round", "Creator", "Cumulative Engagement"]
-    ).properties(height=240)
-
-    st.altair_chart(rep_chart, use_container_width=True)
-
-    # Short Folk Theorem Insight Box
-    if res['social_alignment_pct'] > 50:
-        st.html("""
-        <div class="callout-box nash">
-            <b style="color: #34d399;">Repeated Game Dynamic (Folk Theorem):</b> By playing reciprocal strategies like Tit-for-Tat, creators successfully overcome the single-shot Prisoner's Dilemma. The discounted future reward of sustained cooperation (5.0, 5.0) outweighs the short-term temptation to defect to Trending (6.0).
-        </div>
-        """)
-    else:
-        st.html("""
-        <div class="callout-box dilemma">
-            <b style="color: #f87171;">Defection Trap (Rat Race):</b> Without reciprocal deterrence, the dominant strategy of chasing viral trends pulls creators into the inefficient Nash equilibrium (3.0, 3.0), resulting in mutual attention fatigue.
-        </div>
-        """)
-
-
-

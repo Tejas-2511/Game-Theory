@@ -1,8 +1,8 @@
-# 📱 Game Theory-Based Analysis of Social Media Content Competition
+# 📱 Game Theory: Social Media Content Competition
 
 An interactive computational simulation examining content creator incentives, viral algorithms, Nash equilibria, and collective attention dilemmas in short-form video platforms (TikTok, Instagram Reels, YouTube Shorts).
 
-Developed for academic evaluation combining Game Theory concepts, Python simulations, numerical results, and interactive visual dashboards.
+Developed for academic evaluation combining Game Theory concepts, Python computations, numerical results, and an interactive Streamlit dashboard.
 
 ---
 
@@ -29,80 +29,73 @@ The interactive application will automatically open in your default browser at `
 
 ## 🎯 Project Overview & Motivation
 
-In algorithmic social platforms, competing creators vie for finite viewer attention and algorithm distribution. Each creator faces a strategic trade-off:
+In algorithmic social platforms, competing creators vie for finite viewer attention and recommendation distribution. Each creator faces a strategic trade-off:
 1. **Trending Content ($T$):** Mimic viral formats and audio. Low barrier to entry and high short-term virality, but creates feed congestion and viewer fatigue when duplicated.
 2. **Original Content ($O$):** Invest in unique, high-effort production. Builds loyal audience engagement and retention, but risks being overshadowed by viral spikes.
 3. **Niche Content ($N$):** Focus on dedicated subcultures. Insulates the creator from mainstream feed cannibalization.
 
 Game Theory allows us to formally model these strategic interactions, identify stable outcomes (Nash Equilibria), and quantify the systemic inefficiencies of attention competition.
 
+---
+
 ## 📚 Syllabus Concept Mapping
 
-| Syllabus concept | How we'll use it |
+| Syllabus Concept | Project Implementation |
 | :--- | :--- |
-| **Normal-form game** | Represent two content creators and their strategies in a payoff matrix. |
-| **Strategies and payoffs** | Compare Trending vs Original content. |
-| **Dominant strategy** | Check whether one strategy is always better. |
-| **Nash equilibrium** | Find the outcome where neither creator benefits by changing strategy alone. |
-| **Pareto optimality** | Compare individual incentives with the best combined outcome. |
-| **Repeated-form game** | Simulate iterated competition to test if reciprocal strategies (Tit-for-Tat) sustain mutual cooperation. |
+| **Normal-Form Game** | Represent two competing content creators and their strategies in a payoff matrix. |
+| **Strategies & Payoffs** | Compare Trending vs. Original (and Niche) engagement outcomes. |
+| **Dominant Strategy** | Formally test whether chasing viral trends is strictly or weakly dominant. |
+| **Nash Equilibrium** | Solve for pure and mixed strategy equilibria where neither creator can unilaterally improve. |
+| **Pareto Optimality** | Contrast individual selfish rationality $(3, 3)$ with the social optimum $(5, 5)$. |
+| **Price of Anarchy (PoA)** | Quantify the welfare destruction ($\text{PoA} \approx 1.67$, $\sim 40\%$ loss) of uncoordinated competition. |
+| **Folk Theorem** | Theoretical extension explaining how repeated interaction and future rewards can sustain mutual quality. |
 
 ---
 
-## 🧠 The Game Theory Model
-
-### 1. The Normal-Form Strategic Payoff Matrix (2×2)
+## 🧠 The Strategic Payoff Matrix (2×2)
 
 | Creator A \ Creator B | Trending ($T$) | Original ($O$) |
 |:---|:---:|:---:|
-| **Trending ($T$)** | **(3, 3)** <br> *(Nash Equilibrium)* | **(6, 2)** <br> *(Viral Steal)* |
-| **Original ($O$)** | **(2, 6)** <br> *(Viral Steal)* | **(5, 5)** <br> *(Social Optimum)* |
+| **Trending ($T$)** | **(3.0, 3.0)** <br> *(Nash Equilibrium)* | **(6.0, 2.0)** <br> *(Viral Steal)* |
+| **Original ($O$)** | **(2.0, 6.0)** <br> *(Viral Steal)* | **(5.0, 5.0)** <br> *(Social Optimum)* |
 
 *(Payoff values represent standardized engagement units: views, watch time, shares, and retention).*
 
-### 2. Strategic Insights & Proofs
+### Core Results Summary:
+- **Strictly Dominant Strategy:** Trending ($T$) for both creators.
+- **Unique Nash Equilibrium:** $(Trending, Trending) = (3.0, 3.0)$.
+- **Social Optimum:** $(Original, Original) = (5.0, 5.0)$ with combined welfare $= 10.0$.
+- **Attention Economy Prisoner's Dilemma:** Individual optimization yields $(3.0, 3.0)$, strictly dominated by $(5.0, 5.0)$.
+- **Price of Anarchy (PoA):** $\text{PoA} = \frac{10.0}{6.0} \approx 1.67$ ($40\%$ welfare loss).
 
-- **Dominant Strategy:**
-  - For Creator A:
-    - If B plays Trending: $u_A(T, T) = 3 > u_A(O, T) = 2$ $\rightarrow$ Trending is optimal.
-    - If B plays Original: $u_A(T, O) = 6 > u_A(O, O) = 5$ $\rightarrow$ Trending is optimal.
-  - Trending is a **strictly dominant strategy** for both creators.
-- **Pure-Strategy Nash Equilibrium:**
-  - Unique Nash Equilibrium at **$(Trending, Trending)$ with payoffs $(3, 3)$**.
-  - At this point, neither creator can unilaterally improve their payoff by switching to Original.
-- **The Attention Economy Prisoner's Dilemma:**
-  - While $(Trending, Trending)$ is the rational equilibrium, both creators would be strictly better off at **$(Original, Original) = (5, 5)$**.
-  - Selfish optimization leads to collective loss of engagement.
-- **Price of Anarchy (PoA):**
-  $$\text{PoA} = \frac{\text{Maximum Social Welfare}}{\text{Nash Equilibrium Welfare}} = \frac{5 + 5}{3 + 3} = \frac{10}{6} \approx 1.67$$
-  Uncoordinated individual competition leads to an approximate **40% destruction of total potential attention value**.
+---
+
+## 📖 In-Depth Presentation & Theory Guide
+
+For the complete academic write-up, detailed mathematical proofs, derivations, scenario comparisons, and viva Q&A cheat-sheet, see:
+
+👉 **[THEORY_GUIDE.md](file:///c:/Users/tejas/Documents/tejas/codin/Game%20Theory/THEORY_GUIDE.md)**
+
+Included in the theory guide:
+1. Executive Summary & Problem Statement
+2. Formal Game-Theoretic Mathematical Definition
+3. Mathematical Proofs (Best-Response, Dominance, Pure Nash, Mixed-Strategy Indifference, Pareto Dominance, Price of Anarchy)
+4. Game Typology (Prisoner's Dilemma, Stag Hunt, Hawk-Dove, 3×3 Extended Model)
+5. Repeated Game Extension: The Folk Theorem (Finite unravelling vs. Infinite $\delta$, Mathematical proof of $\delta^* \approx 0.33$, Axelrod's Tit-for-Tat principles)
+6. Platform Mechanism Design & Policy Implications
+7. Viva & Examiner Q&A Cheat-Sheet (Top 5 examiner questions & answers)
 
 ---
 
 ## 💻 Application Features
 
-The interactive dashboard includes 5 comprehensive modules:
-
-1. **📊 Strategic Matrix & Equilibrium Solver**:
-   - Interactive normal-form payoff matrix with visual indicator badges for Best Responses (BR A / BR B), Nash Equilibria, and Social Optima.
-   - Mixed-strategy Nash equilibrium derivation with indifference formulas.
-   - Scenario presets (Prisoner's Dilemma, Stag Hunt, Hawk-Dove) plus full live in-place matrix customization allowing real-time re-solving of equilibria and dynamics.
-2. **🎯 Single-Round What-If Sandbox**:
-   - Select strategies for both creators in real-time.
-   - Immediate feedback showing whether an outcome is stable or which creator has an incentive to defect.
-   - Comparative engagement bar charts.
-3. **🔄 Dynamic Iterated Multi-Round Simulation**:
-   - Run 10 to 100 consecutive content publishing cycles.
-   - Built-in behavioral agents: *Always Trending*, *Always Original*, *Tit-for-Tat*, *Best-Response Learner*, *Fictitious Play*, *Q-Learning AI*, and *Random Agent*.
-   - Platform noise parameter ($\sigma$) modeling recommendation algorithm randomness.
-   - Audience trend fatigue decay factor penalizing consecutive viral spam.
-   - Interactive cumulative engagement trajectories and strategy adoption charts.
-   - Downloadable CSV log of tournament results.
-4. **🎮 Human vs. AI Creator Arena**:
-   - Play as Creator A round-by-round against an adaptive AI competitor.
-   - Real-time coaching tips explaining game-theoretic dynamics after every post.
-5. **📑 Academic Report & Viva Cheat-Sheet**:
-   - Structured academic summary covering problem statement, mathematical proofs, real-world social media implications, and answers to common examiner questions.
+The interactive dashboard provides a unified, real-time computational environment:
+1. **Interactive Payoff Matrix:** Visual indicator badges for Best Responses (`BR A` / `BR B`), Pure-Strategy Nash Equilibria (`Nash Eq`), and Social Welfare Optima (`Social Opt`).
+2. **Live In-Place Matrix Editor:** Modify any payoff cell in real-time to immediately observe changes in Nash equilibria, dominance, and efficiency.
+3. **Scenario Presets:** Instant loading for *Prisoner's Dilemma*, *Stag Hunt*, *Hawk-Dove*, and *3x3 Extended*.
+4. **Dominance & Mixed Strategies:** Analytical tests for strictly/weakly dominant strategies and mixed-strategy Nash equilibrium derivations.
+5. **Pareto Optimality & Price of Anarchy:** Quantifies efficiency loss and Price of Anarchy (PoA) resulting from selfish individual incentives.
+6. **Folk Theorem Extension:** Short theoretical callout connecting one-shot competition to ongoing repeated interaction.
 
 ---
 
@@ -110,13 +103,10 @@ The interactive dashboard includes 5 comprehensive modules:
 
 ```
 Game Theory/
-│
 ├── app.py              # Main interactive Streamlit application with modern UI
 ├── game_theory.py      # Core game theory mathematical engine (Nash, BR, PoA)
-├── simulation.py       # Iterated multi-round simulator & agent behavioral policies
-├── run.bat             # One-click Windows launcher
-└── README.md           # Complete project documentation & theory guide
+├── simulation.py       # Algorithmic creator behavioral policies & simulation engine
+├── THEORY_GUIDE.md     # In-depth theoretical proofs, derivations & presentation guide
+├── README.md           # Project overview, quick start & summary
+└── run.bat             # One-click Windows launcher
 ```
-
----
-

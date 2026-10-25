@@ -145,19 +145,20 @@ class RandomAgent(BaseCreatorAgent):
 
 
 def get_agent_by_type(agent_type: str, name: str, strategies: List[str]) -> BaseCreatorAgent:
-    if agent_type == "Always Trending (Viral Chaser)":
-        return AlwaysStrategyAgent(name, strategies, target_strategy_idx=0)
-    elif agent_type == "Always Original (Quality Purist)":
-        return AlwaysStrategyAgent(name, strategies, target_strategy_idx=1)
-    elif agent_type == "Always Niche (Community Specialist)" and len(strategies) > 2:
+    a_lower = agent_type.lower()
+    if "niche" in a_lower and len(strategies) > 2:
         return AlwaysStrategyAgent(name, strategies, target_strategy_idx=2)
-    elif agent_type == "Tit-for-Tat (Reciprocal Cooperator)":
+    elif "trending" in a_lower:
+        return AlwaysStrategyAgent(name, strategies, target_strategy_idx=0)
+    elif "original" in a_lower:
+        return AlwaysStrategyAgent(name, strategies, target_strategy_idx=1)
+    elif "tit-for-tat" in a_lower or "tit for tat" in a_lower:
         return TitForTatAgent(name, strategies, initial_choice=1)
-    elif agent_type == "Best-Response Learner (Greedy Adaptor)":
+    elif "best-response" in a_lower or "best response" in a_lower:
         return BestResponseLearnerAgent(name, strategies)
-    elif agent_type == "Fictitious Play (Belief-Based Strategy)":
+    elif "fictitious" in a_lower:
         return FictitiousPlayAgent(name, strategies)
-    elif agent_type == "Q-Learning AI (Reinforcement Agent)":
+    elif "q-learning" in a_lower:
         return EpsilonGreedyQLearner(name, strategies)
     else:
         return RandomAgent(name, strategies)
